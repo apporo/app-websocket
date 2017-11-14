@@ -11,8 +11,7 @@ if (require.main === module) app.server.start();
 
 app.getSandboxService = function(serviceName) {
   return this.server.invoke(function(injector) {
-    var sandboxManager = injector.lookup('sandboxManager');
-    return sandboxManager.getSandboxService(serviceName);
+    return injector.lookup('sandboxManager').getSandboxService(serviceName);
   });
 }
 

@@ -26,22 +26,19 @@ describe('appWebsocket:interceptor', function() {
 		before(function(done) {
 			app = require(path.join(__dirname, '../app/index'));
 			app.getSandboxService('websocketTrigger').then(function(service) {
-				service.addSocketHandler('example1', function(eventName, eventData, next) {
-					if (eventName === 'greeting') {
-						debugx('eventData: %s', eventData);
-						msgs.push(eventData);
-						if (msgs.length >= 2) syncher.check('greeting', 'has_done');
-					} else {
-						next();
-					}
+				service.addInterceptor('example1', function(eventName, eventData, next) {
+					debugx('eventData: %s', eventData);
+					msgs.push(eventData);
+					if (msgs.length >= 2) syncher.check('greeting', 'has_done');
+				}, {
+					eventPattern: 'greeting'
 				});
-				service.addSocketHandler('example2', function(eventName, eventData, next) {
-					if (eventName === 'voting') {
-						counter += eventData;
-						if (counter >= 8) syncher.check('voting', 'has_done');
-					} else {
-						next();
-					}
+				service.addInterceptor('example2', function(eventName, eventData, next) {
+					debugx('eventData: %s', eventData);
+					counter += eventData;
+					if (counter >= 8) syncher.check('voting', 'has_done');
+				}, {
+					eventPattern: 'vot.*'
 				});
 				return service;
 			}).then(lodash.ary(done, 0)).catch(lodash.ary(done, 1));
@@ -58,7 +55,7 @@ describe('appWebsocket:interceptor', function() {
 
 		it('the socket interceptor should intercept correct data', function(done) {
 			client.emit('greeting', 'Hello world');
-			client.emit('voting', 3);
+			client.emit('voter', 3);
 			client.emit('greeting', 'From devebot');
 			client.emit('voting', 5);
 			syncher.ready(function() {

@@ -1,3 +1,3 @@
 # app-websocket
 
-> Devebot express-based websocket layerware
+> Devebot socket.io-based websocket layerware

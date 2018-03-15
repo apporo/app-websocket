@@ -4,7 +4,7 @@ var events = require('events');
 var util = require('util');
 var Devebot = require('devebot');
 var lodash = Devebot.require('lodash');
-var debugx =  Devebot.require('debug')('appWebsocket:trigger');
+var debugx = Devebot.require('pinbug')('appWebsocket:trigger');
 var socketIO = require('socket.io');
 
 var Service = function(params) {

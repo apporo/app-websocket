@@ -1,7 +1,7 @@
 {
   "name": "app-websocket",
   "version": "0.2.0",
-  "description": "Devebot express-based websocket layerware",
+  "description": "Devebot socket.io-based websocket layerware",
   "homepage": "https://github.com/apporo/app-websocket.git",
   "author": {
     "name": "apporo",
@@ -9,31 +9,41 @@
     "url": "https://github.com/apporo"
   },
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "directories": {
+    "lib": "lib/"
   },
-  "engines": {
-    "node": "0.10 || 0.11 || 0.12 || 4"
+  "files": [
+    "bin/",
+    "config/",
+    "data/",
+    "lib/"
+  ],
+  "scripts": {
+    "build": "babel ./src -d ./lib",
+    "clean": "rm -rf ./lib",
+    "prepublish": "NODE_ENV=production npm run build",
+    "pretest": "NODE_ENV=test npm run build",
+    "test": "cucumber-js ./test/**/*.feature",
+    "verify": "npm run prepublish && cucumber-js ./test/**/*.feature"
   },
   "keywords": [
     "devebot",
     "devebot-plugin"
   ],
   "peerDependencies": {
-    "app-webserver": "^0.2.1",
-    "devebot": "^0.2.2"
+    "app-webserver": "^0.2.2",
+    "devebot": "^0.2.5"
   },
   "dependencies": {
-    "app-webserver": "^0.2.1",
-    "devebot": "^0.2.2",
+    "app-webserver": "^0.2.2",
+    "devebot": "^0.2.5",
     "socket.io": "^2.0.4"
   },
   "devDependencies": {
-    "chai": "^3.5.0",
-    "express": "^4.14.0",
-    "http-proxy": "^1.16.2",
-    "loadsync": "^0.1.8",
-    "mocha": "^3.5.3",
-    "socket.io-client": "^2.0.4"
+    "babel-cli": "^6.26.0",
+    "babel-plugin-minify-mangle-names": "^0.3.0",
+    "babel-preset-env": "^1.6.1",
+    "cucumber": "^4.0.0",
+    "mocha": "^3.5.3"
   }
 }

@@ -1,6 +1,6 @@
 module.exports = {
   devebot: {
-    verbose: false
+    verbose: true
   },
   logger: {
     transports: {

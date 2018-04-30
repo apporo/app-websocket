@@ -21,8 +21,8 @@
   "scripts": {
     "build": "babel ./src -d ./lib",
     "clean": "rm -rf ./lib",
-    "prepublish": "NODE_ENV=production npm run build",
-    "pretest": "NODE_ENV=test npm run build",
+    "prepublish": "npm run clean && NODE_ENV=production npm run build",
+    "pretest": "npm run clean && NODE_ENV=test npm run build",
     "test": "cucumber-js ./test/**/*.feature",
     "verify": "npm run prepublish && cucumber-js ./test/**/*.feature"
   },
@@ -32,11 +32,11 @@
   ],
   "peerDependencies": {
     "app-webserver": "^0.2.2",
-    "devebot": "^0.2.5"
+    "devebot": "^0.2.6"
   },
   "dependencies": {
     "app-webserver": "^0.2.2",
-    "devebot": "^0.2.5",
+    "devebot": "^0.2.6",
     "socket.io": "^2.0.4"
   },
   "devDependencies": {

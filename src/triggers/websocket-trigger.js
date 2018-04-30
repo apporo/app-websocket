@@ -1,28 +1,28 @@
 'use strict';
 
-var Devebot = require('devebot');
-var chores = Devebot.require('chores');
-var lodash = Devebot.require('lodash');
-var socketIO = require('socket.io');
+const Devebot = require('devebot');
+const chores = Devebot.require('chores');
+const lodash = Devebot.require('lodash');
+const socketIO = require('socket.io');
 
-var Service = function(params) {
+function WebsocketTrigger(params) {
   params = params || {};
 
-  var self = this;
-  var LX = params.loggingFactory.getLogger();
-  var LT = params.loggingFactory.getTracer();
-  var packageName = params.packageName || 'app-websocket';
-  var blockRef = chores.getBlockRef(__filename, packageName);
+  let self = this;
+  let LX = params.loggingFactory.getLogger();
+  let LT = params.loggingFactory.getTracer();
+  let packageName = params.packageName || 'app-websocket';
+  let blockRef = chores.getBlockRef(__filename, packageName);
 
   LX.has('silly') && LX.log('silly', LT.toMessage({
     tags: [ blockRef, 'constructor-begin' ],
     text: ' + constructor begin ...'
   }));
 
-  var webserverTrigger = params["app-webserver/webserverTrigger"];
-  var pluginCfg = lodash.get(params, ['sandboxConfig'], {});
+  let webserverTrigger = params["app-webserver/webserverTrigger"];
+  let pluginCfg = lodash.get(params, ['sandboxConfig'], {});
 
-  var socketHandler = {};
+  let socketHandler = {};
 
   self.addInterceptor = function(key, handler, options) {
     options = options || {};
@@ -37,7 +37,7 @@ var Service = function(params) {
       if (options.originalCallback === true) {
         socketHandler[key].interceptor = handler;
       } else {
-        var eventMatcher = null;
+        let eventMatcher = null;
         if (options.eventPattern instanceof RegExp) {
           LX.has('trace') && LX.log('trace', LT.toMessage({
             tags: [ blockRef, 'event-pattern' ],
@@ -54,7 +54,7 @@ var Service = function(params) {
           eventMatcher = new RegExp(options.eventPattern);
         }
         socketHandler[key].interceptor = function(packet, next) {
-          var that = this;
+          let that = this;
           if (socketHandler[key].enabled == false) {
             next();
             LX.has('debug') && LX.log('debug', that.tracer.toMessage({
@@ -62,8 +62,8 @@ var Service = function(params) {
             }));
             return;
           }
-          var eventName = (packet instanceof Array) && (packet.length > 0) && packet[0];
-          var eventData = (packet instanceof Array) && (packet.length > 1) && packet[1];
+          let eventName = (packet instanceof Array) && (packet.length > 0) && packet[0];
+          let eventData = (packet instanceof Array) && (packet.length > 1) && packet[1];
           if (LX.has('trace')) {
             LX.log('trace', that.tracer.add({
               eventName: eventName,
@@ -92,16 +92,16 @@ var Service = function(params) {
     }
   };
 
-  var io = socketIO();
+  let io = socketIO();
 
   this.helper = {};
 
   this.helper.getSocketById = function(socketId, opts) {
     opts = opts || {};
     if (opts.isNamespaceSupported || opts.namespace) {
-      var ns = io && io.of(opts.namespace || "/");
+      let ns = io && io.of(opts.namespace || "/");
       if (ns && ns.connected) {
-        var socket = ns.connected[socketId];
+        let socket = ns.connected[socketId];
         return socket;
       }
     }
@@ -109,16 +109,16 @@ var Service = function(params) {
   }
 
   io.on('connection', function (socket) {
-    var socketId = socket.id;
-    var clientIp = socket.request.connection.remoteAddress;
-    var tracer = LT.branch({ key: 'socketId', value: socketId });
+    let socketId = socket.id;
+    let clientIp = socket.request.connection.remoteAddress;
+    let tracer = LT.branch({ key: 'socketId', value: socketId });
 
     LX.has('debug') && LX.log('debug', tracer.toMessage({
       text: 'Socket server received a new connection'
     }));
 
     lodash.forOwn(socketHandler, function(handler, key) {
-      var subTracer = tracer.branch({ key: 'handlerId', value: key });
+      let subTracer = tracer.branch({ key: 'handlerId', value: key });
       LX.has('debug') && LX.log('debug', subTracer.toMessage({
         text: 'Register interceptor[${handlerId}] with socket[${socketId}]'
       }));
@@ -147,6 +147,6 @@ var Service = function(params) {
   }));
 };
 
-Service.referenceList = [ "app-webserver/webserverTrigger" ];
+WebsocketTrigger.referenceList = [ "app-webserver/webserverTrigger" ];
 
-module.exports = Service;
+module.exports = WebsocketTrigger;

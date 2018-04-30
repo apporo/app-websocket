@@ -1,7 +1,7 @@
 {
-  "name": "app-websocket-example",
+  "name": "app-websocket-lab",
   "version": "0.1.0",
-  "description": "Devebot app-websocket example",
+  "description": "Devebot app-websocket lab",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

@@ -11,10 +11,4 @@ var app = require('devebot').launchApplication({
 
 if (require.main === module) app.server.start();
 
-app.getSandboxService = function(serviceName) {
-  return this.server.invoke(function(injector) {
-    return injector.lookup('sandboxManager').getSandboxService(serviceName);
-  });
-}
-
 module.exports = app;

@@ -27,9 +27,7 @@ function WebsocketTrigger(params) {
   self.addInterceptor = function(key, handler, options) {
     options = options || {};
     if (lodash.isString(key) && lodash.isFunction(handler)) {
-      LX.has('trace') && LX.log('trace', LT.add({
-        key: key
-      }).toMessage({
+      LX.has('trace') && LX.log('trace', LT.add({ key }).toMessage({
         tags: [ blockRef, 'add-interceptor' ],
         text: ' - addInterceptor("${key}", /handler/)'
       }));
@@ -65,21 +63,25 @@ function WebsocketTrigger(params) {
           let eventName = (packet instanceof Array) && (packet.length > 0) && packet[0];
           let eventData = (packet instanceof Array) && (packet.length > 1) && packet[1];
           if (LX.has('trace')) {
-            LX.log('trace', that.tracer.add({
-              eventName: eventName,
-              eventData: eventData
-            }).toMessage({
+            LX.log('trace', that.tracer.add({ eventName, eventData }).toMessage({
               text: 'Socket receives a packet'
             }));
           } else if (LX.has('debug')) {
-            LX.log('debug', that.tracer.add({
-              eventName: eventName
-            }).toMessage({
+            LX.log('debug', that.tracer.add({ eventName }).toMessage({
               text: 'Socket receives a packet'
             }));
           }
-          if (eventMatcher == null || eventName == null || eventName.match(eventMatcher)) {
-            handler.call(that, eventName, eventData, next);
+          if (eventName != null && (eventMatcher == null || eventName.match(eventMatcher))) {
+            handler.call(that, eventName, eventData, next, function done(err) {
+              let ack = that.socket.ack(packet.id);
+              LX.has('debug') && LX.log('debug', that.tracer.add({
+                eventName: eventName,
+                ackType: typeof(ack)
+              }).toMessage({
+                text: 'ACK of [${eventName}] is a ${ackType}'
+              }));
+              return ack;
+            });
           } else {
             next();
           }
@@ -92,7 +94,8 @@ function WebsocketTrigger(params) {
     }
   };
 
-  let io = socketIO();
+  let options = pluginCfg.options || {};
+  let io = socketIO(options);
 
   this.helper = {};
 

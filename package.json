@@ -1,6 +1,6 @@
 {
   "name": "app-websocket",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Devebot socket.io-based websocket layerware",
   "homepage": "https://github.com/apporo/app-websocket.git",
   "author": {
@@ -31,13 +31,13 @@
     "devebot-plugin"
   ],
   "peerDependencies": {
-    "app-webserver": "^0.2.2",
-    "devebot": "^0.2.6"
+    "app-webserver": "^0.3.0",
+    "devebot": "^0.3.0"
   },
   "dependencies": {
-    "app-webserver": "^0.2.2",
-    "devebot": "^0.2.6",
-    "socket.io": "^2.0.4"
+    "app-webserver": "^0.3.0",
+    "devebot": "^0.3.0",
+    "socket.io": "2.0.4"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
